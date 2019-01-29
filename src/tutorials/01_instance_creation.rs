@@ -16,7 +16,7 @@ struct VulkanApp {
     // winit stuff
     events_loop : EventsLoop,
     _window     : winit::Window,
-
+    _entry      : ash::Entry,
     instance    : ash::Instance,
 }
 
@@ -29,12 +29,13 @@ impl VulkanApp {
         let window = VulkanApp::init_window(&events_loop);
 
         // init vulkan stuff
-        let instance = VulkanApp::create_instance();
+        let (entry, instance) = VulkanApp::create_instance();
 
         // cleanup(); the 'drop' function will take care of it.
         VulkanApp {
             events_loop,
             _window: window,
+            _entry: entry,
             instance,
         }
     }
@@ -48,7 +49,7 @@ impl VulkanApp {
             .expect("Failed to create window.")
     }
 
-    fn create_instance() -> ash::Instance {
+    fn create_instance() -> (ash::Entry, ash::Instance) {
 
         let entry = ash::Entry::new().unwrap();
 
@@ -81,7 +82,7 @@ impl VulkanApp {
             .expect("Failed to create instance!")
         };
 
-        instance
+        (entry, instance)
     }
 
     pub fn main_loop(&mut self) {
